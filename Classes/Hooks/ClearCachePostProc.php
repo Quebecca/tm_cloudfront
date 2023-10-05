@@ -299,12 +299,14 @@ class ClearCachePostProc
                     ->where(
                         $queryBuilder->expr()->eq('distributionId', $queryBuilder->createNamedParameter($distId))
                     )
-                    ->execute();
+                    ->executeStatement();
             }
 
-            if (((!empty($this->cloudFrontConfiguration['mode'])) && ($this->cloudFrontConfiguration['mode'] == 'live')) || ($force)) {
+            if (!empty($this->cloudFrontConfiguration['mode'])
+                 && $this->cloudFrontConfiguration['mode'] == 'live'
+            ) {
                 $cloudFront = GeneralUtility::makeInstance('Aws\CloudFront\CloudFrontClient', $options);
-                $GLOBALS['BE_USER']->writelog(4,0,0,0,$value['pathsegment']. ' ('.$distId.')', "tm_cloudfront");
+                $GLOBALS['BE_USER']->writelog(4,0,0,0, implode(', ', $paths) . ' ('.$distId.')', "tm_cloudfront");
                 try {
                     $result = $cloudFront->createInvalidation([
                         'DistributionId' => $distId, // REQUIRED
@@ -316,16 +318,17 @@ class ClearCachePostProc
                             ]
                         ]
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                 }
             } else {
-                foreach ($paths as $k => $value) {
+                foreach ($paths as $value) {
                     $data = [
                         'pathsegment' => $value,
                         'distributionId' => $distId,
                         'id' => md5($value.$distId),
                     ];
-                    GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('tx_tmcloudfront_domain_model_invalidation')
+                    GeneralUtility::makeInstance(ConnectionPool::class)
+                        ->getConnectionForTable('tx_tmcloudfront_domain_model_invalidation')
                         ->prepare("insert ignore into tx_tmcloudfront_domain_model_invalidation (pathsegment,distributionId,id) values(?,?,?)")
                         ->executeStatement($data);
                 }

@@ -51,7 +51,7 @@ class ClearTask extends AbstractTask
                 ->where(
                     $queryBuilder->expr()->eq('distributionId', $queryBuilder->createNamedParameter($distId))
                 )
-                ->execute()
+                ->executeQuery()
                 ->fetchOne();
 
             if ($count > 0) {
@@ -90,7 +90,7 @@ class ClearTask extends AbstractTask
                         ->where(
                             $queryBuilder->expr()->eq('distributionId', $queryBuilder->createNamedParameter($distId))
                         )
-                        ->execute()
+                        ->executeQuery()
                         ->fetchAllAssociative();
 
                     foreach (array_chunk($rows, $availableInvalidations) as $chunk) {
@@ -142,7 +142,7 @@ class ClearTask extends AbstractTask
             ->where(
                 $queryBuilder->expr()->in('uid', $ids)
             )
-            ->execute();
+            ->executeStatement();
     }
 
     /**
