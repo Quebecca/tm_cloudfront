@@ -55,8 +55,8 @@ class ClearTask extends AbstractTask
 
             if ($count > 0) {
                 $options = [
-                    'version' => $this->cloudFrontConfiguration['version'],
-                    'region' => $this->cloudFrontConfiguration['region'],
+                    'version' => $this->cloudFrontConfiguration['version'] ?? '',
+                    'region' => $this->cloudFrontConfiguration['region'] ?? '',
                     'credentials' => [
                         'key' => $this->cloudFrontConfiguration['apikey'],
                         'secret' => $this->cloudFrontConfiguration['apisecret'],
