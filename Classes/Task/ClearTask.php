@@ -26,7 +26,10 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExis
 
 class ClearTask extends AbstractTask
 {
-
+    protected $executed;
+    protected $activate_logs;
+    protected $cloudFrontConfiguration;
+    
     /**
      * @return bool
      * @throws Exception
